@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import MultiSignatureContract from "./contracts/MultiSignature.json";
-import getWeb3 from "./getWeb3";
+import getWeb3 from "./web3/getWeb3";
 
-import "./App.css";
+import "./styles/App.css";
 
 class App extends Component {
   state = { transactionCount: -1, web3: null, accounts: null, contract: null };
