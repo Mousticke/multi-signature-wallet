@@ -1,67 +1,34 @@
-import React, { Component } from "react";
-import MultiSignatureContract from "./contracts/MultiSignature.json";
-import getWeb3 from "./web3/getWeb3";
-
+import React from "react";
 import "./styles/App.css";
+import MenuComponent from './components/Menu'
+import MetaMaskConnect from './components/MetaMaskConnect'
+import { Grid } from "semantic-ui-react";
+import { useWeb3Context } from "./contexts/web3Context";
 
-class App extends Component {
-  state = { transactionCount: -1, web3: null, accounts: null, contract: null };
+const App = () => {
+  const {state:{account, netId}} = useWeb3Context()
 
-  componentDidMount = async () => {
-    try {
-      // Get network provider and web3 instance.
-      const web3 = await getWeb3();
-
-      // Use web3 to get the user's accounts.
-      const accounts = await web3.eth.getAccounts();
-
-      // Get the contract instance.
-      const networkId = await web3.eth.net.getId();
-      const deployedNetwork = MultiSignatureContract.networks[networkId];
-      const instance = new web3.eth.Contract(
-        MultiSignatureContract.abi,
-        deployedNetwork && deployedNetwork.address,
-      );
-
-      // Set web3, accounts, and contract to the state, and then proceed with an
-      // example of interacting with the contract's methods.
-      this.setState({ web3, accounts, contract: instance }, this.runExample);
-    } catch (error) {
-      // Catch any errors for any of the above operations.
-      alert(
-        `Failed to load web3, accounts, or contract. Check console for details.`,
-      );
-      console.error(error);
-    }
-  };
-
-  runExample = async () => {
-    const { accounts, contract } = this.state;
-
-    // Get the value from the contract to prove it worked.
-    const response = await contract.methods.getTransactionCount().call();
-
-    // Update state with the result.
-    this.setState({ transactionCount: response });
-  };
-
-  render() {
-    if (!this.state.web3) {
-      return <div>Loading Web3, accounts, and contract...</div>;
-    }
-    return (
-      <div className="App">
-        <h1>Good to Go!</h1>
-        <p>Your Truffle Box is installed and ready.</p>
-        <h2>Smart Contract Example</h2>
-        <p>
-          If your contracts compiled and migrated successfully, below will show
-          the number of transaction.
-        </p>
-        <div>The number of transaction is: {this.state.transactionCount}</div>
-      </div>
-    );
-  }
+  return (
+    <div className="App">
+      {account ? (
+        <>
+          <MenuComponent account={account} netId={netId}/>
+          <p>Application</p>
+        </>
+        
+      ) : (
+        <>
+          <MenuComponent/>
+          <Grid container verticalAlign="middle" centered>
+            <Grid.Column>
+              <MetaMaskConnect/>
+            </Grid.Column>     
+          </Grid>   
+        </>
+      )}
+       
+    </div>
+  )
 }
 
 export default App;
