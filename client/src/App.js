@@ -5,6 +5,7 @@ import MetaMaskConnect from './components/MetaMaskConnect'
 import { Grid, Segment } from "semantic-ui-react";
 import { useWeb3Context } from "./contexts/web3Context";
 import LeftPanel from "./components/LeftPanel";
+import TransactionTable from "./components/TransactionTable";
 
 //TODO : Add a feed
 
@@ -22,7 +23,9 @@ const App = () => {
               <LeftPanel />
             </Grid.Column>   
             <Grid.Column width={12}>
-              <Segment color='blue'>Application</Segment>
+              <Segment color='blue'>
+                <TransactionTable/>
+              </Segment>
             </Grid.Column>     
           </Grid>   
         </>
