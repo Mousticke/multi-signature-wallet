@@ -42,7 +42,7 @@ yarn test
 
 ## 🤝 Contributing
 
-Contributions, issues and feature requests are welcome!<br />Feel free to check [issues page](https://github.com/Mousticke/multi-signature-wallet/issues). You can also take a look at the [contributing guide](https://github.com/Mousticke/multi-signature-wallet/blob/main/CONTRIBUTING.md).
+Contributions, issues and feature requests are welcome!<br />Feel free to check [issues page](https://github.com/Mousticke/multi-signature-wallet/issues). You can also take a look at the [contributing guide](https://github.com/Mousticke/multi-signature-wallet/blob/main/client/CONTRIBUTING.md).
 
 ## Show your support
 
