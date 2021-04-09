@@ -14,13 +14,13 @@ function getNetwork(netId) {
       case 42:
         return "Kovan test network";
       default:
-        return "Unkown network";
+        return "Unknown network";
     }
   }
 
 function MenuComponent({account, netId}) {
     return (
-        <Menu color="blue">
+        <Menu stackable color="blue">
             {account ? (
               <>
                 <Menu.Item header active>
