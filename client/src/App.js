@@ -7,9 +7,6 @@ import { useWeb3Context } from "./contexts/web3Context";
 import LeftPanel from "./components/LeftPanel";
 import TransactionTable from "./components/TransactionTable";
 
-//TODO : Add a feed
-
-
 const App = () => {
   const {state:{account, netId}} = useWeb3Context()
   
