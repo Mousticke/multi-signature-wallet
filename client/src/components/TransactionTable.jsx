@@ -10,7 +10,7 @@ function TransactionTable({account}) {
             if(trx.executed === false){
                 if(trx.numConfirmations >= state.numConformationsRequired){
                     return (
-                        <Button>Execute 1 </Button>
+                        <Button color="green">Execute 1 </Button>
                     )
                 }else{
                     return (
@@ -27,16 +27,16 @@ function TransactionTable({account}) {
             if(trx.executed === false){
                 if(trx.numConfirmations >= state.numConformationsRequired){
                     return (
-                        <Button>Execute 2 </Button>
+                        <Button color="green">Execute 2 </Button>
                     )
                 }else{
                     if(trx.isConfirmedByCurrentAccount){
                         return (
-                            <Button>Revoke</Button>
+                            <Button color="orange">Revoke</Button>
                         )
                     }else{
                         return (
-                            <Button>Confirm</Button>
+                            <Button color="olive">Confirm</Button>
                         )
                     } 
                 }

@@ -77,6 +77,33 @@ export async function submitTrx(web3, account, params){
     });  
 }
 
+export async function confirmTrx(web3, account, params){
+    const { trxIndex } = params;
+
+    MultiSignatureWallet.setProvider(web3.currentProvider)  
+    const multiSignature = await MultiSignatureWallet.deployed()
+    await multiSignature.confirmTransaction(trxIndex, {
+        from: account,
+    });  
+}
+
+export async function cancelConfirmation(web3, account, params){
+    const { trxIndex } = params;
+
+    MultiSignatureWallet.setProvider(web3.currentProvider)  
+    const multiSignature = await MultiSignatureWallet.deployed()
+    await multiSignature.cancelConfirmation(trxIndex, {
+        from: account,
+    });  
+}
+
+export async function executeTrx(web3, account, params){
+    const {trxIndex} = params
+    MultiSignatureWallet.setProvider(web3.currentProvider)
+    const multiSignature = await MultiSignatureWallet.deployed()
+    await multiSignature.executeTransaction(trxIndex, {from: account})
+}
+
 export function subscribe(web3, address, callback){
     const multiSignature = new web3.eth.Contract(MultiSignatureWallet.abi, address)
     const res = multiSignature.events.allEvents((error, log) => {
