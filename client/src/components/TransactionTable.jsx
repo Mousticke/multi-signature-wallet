@@ -14,7 +14,7 @@ function TransactionTable({account}) {
                     )
                 }else{
                     return (
-                        <Button>Waiting...</Button>
+                        <p>Waiting...</p>
                     )
                 }
             }else{

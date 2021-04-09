@@ -30,12 +30,12 @@ function reducer(state = INITIAL_STATE, action) {
             }
         }
         case CREATE_TRANSACTION: {
-            const { data: { trxIndex, to, value, data, from } } = action;
+            const { data: { trxIndex, to, value, data, owner } } = action;
             const transactions = [
                 {
                     trxIndex: parseInt(trxIndex),
                     to,
-                    from,
+                    from: owner,
                     value: Web3.utils.toBN(value),
                     data,
                     executed: false,

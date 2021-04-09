@@ -5,7 +5,7 @@ import TransactionForm from './TransactionForm';
 
 function ActionWallet() {
     return (
-        <Button.Group horizontal labeled icon>
+        <Button.Group labeled icon>
             <DepositForm depositTriggerButton={<Button icon='download' color='blue' content='Deposit' />} />          
             <Button.Or />
             <TransactionForm transactionTriggerButton={<Button icon='key' color='green' content='Create Transaction' />} />    
