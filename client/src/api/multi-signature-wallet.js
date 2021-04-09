@@ -6,15 +6,13 @@ const MultiSignatureWallet = TruffleContract(multiSignatureWalletTruffle)
 export async function get(web3, account){
     MultiSignatureWallet.setProvider(web3.currentProvider)
     const multiSignature = await MultiSignatureWallet.deployed()
-    
     const balance = await web3.eth.getBalance(multiSignature.address)
     const owners = await multiSignature.getOwner()
-    const numConfirmationRequired = await multiSignature.numConformationsRequired()
+    const numConformationsRequired = await multiSignature.numConformationsRequired()
     const transactionCount = await multiSignature.getTransactionCount()
-
     const countTrx = transactionCount.toNumber();
     const transactions = [];
-    for(let i = 1; i<countTrx; i++)
+    for(let i = 1; i<=countTrx; i++)
     {
         const trxIndex = countTrx - i;
         if(trxIndex < 0)
@@ -38,7 +36,7 @@ export async function get(web3, account){
         address: multiSignature.address,
         balance,
         owners,
-        numConfirmationRequired,
+        numConformationsRequired: numConformationsRequired.toNumber(),
         transactionCount: countTrx,
         transactions
     }
@@ -57,6 +55,26 @@ export async function deposit(web3, account, params){
             }
         ]
     });   
+}
+
+export async function submitTrx(web3, account, params){
+    const { to, value, data } = params;
+
+    MultiSignatureWallet.setProvider(web3.currentProvider)  
+    const multiSignature = await MultiSignatureWallet.deployed()
+    /*await window.ethereum.request({ 
+        method: "eth_sendTransaction", 
+        params: [
+            {
+                to: to, 
+                from: account,
+                value: web3.utils.toHex(params.value),
+            }
+        ]
+    }); */
+    await multiSignature.submitTransaction(to, value, data, {
+        from: account,
+    });  
 }
 
 export function subscribe(web3, address, callback){

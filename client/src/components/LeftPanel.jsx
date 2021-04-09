@@ -10,7 +10,7 @@ function LeftPanel() {
 
     return (
         <Segment color='blue'>
-            <p>Balance : {state.balance} wei</p>
+            <Segment>Balance : {state.balance} wei</Segment>
             <DividerHeader headerType="h4" title="Owners" />
             <OwnersInfo owners={state.owners}/>
             <DividerHeader headerType="h4" title="Actions" />

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Item } from "semantic-ui-react";
+import { Item, Segment } from "semantic-ui-react";
 
 function OwnersInfo({owners}) {
     return (
@@ -7,7 +7,7 @@ function OwnersInfo({owners}) {
             {owners.map((owner, i) => (
             <Item key={i}>
                 <Item.Content>
-                    {owner}
+                    <Segment>{owner}</Segment>
                 </Item.Content>
             </Item>
             ))}

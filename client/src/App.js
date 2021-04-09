@@ -19,12 +19,12 @@ const App = () => {
         <>
           <MenuComponent account={account} netId={netId}/>
           <Grid padded="horizontally" columns={2}>
-            <Grid.Column width={3}>
+            <Grid.Column width={4}>
               <LeftPanel />
             </Grid.Column>   
-            <Grid.Column width={12}>
+            <Grid.Column width={11}>
               <Segment color='blue'>
-                <TransactionTable/>
+                <TransactionTable account={account}/>
               </Segment>
             </Grid.Column>     
           </Grid>   

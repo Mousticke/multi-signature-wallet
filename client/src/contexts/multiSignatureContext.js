@@ -1,20 +1,21 @@
 import React, { useReducer, useEffect, createContext, useContext, useMemo, } from "react";
 import { useWeb3Context } from "../contexts/web3Context";
 import { get as getMultiSignatureWallet, subscribe } from "../api/multi-signature-wallet";
+import Web3 from "web3";
 
 const INITIAL_STATE = {
     address: "",
     balance: "0",
     owners: [],
-    numConfirmationsRequired: 0,
+    numConformationsRequired: 0,
     transactionCount: 0,
     transactions: [],
 };
 const SET = "SET";
 const UPDATE_BALANCE = "UPDATE_BALANCE";
+const CREATE_TRANSACTION = "CREATE_TRANSACTION";
 
 function reducer(state = INITIAL_STATE, action) {
-    console.log(action)
     switch (action.type) {
         case SET: {
             return{
@@ -28,6 +29,28 @@ function reducer(state = INITIAL_STATE, action) {
                 balance: action.data.balance
             }
         }
+        case CREATE_TRANSACTION: {
+            const { data: { trxIndex, to, value, data, from } } = action;
+            const transactions = [
+                {
+                    trxIndex: parseInt(trxIndex),
+                    to,
+                    from,
+                    value: Web3.utils.toBN(value),
+                    data,
+                    executed: false,
+                    numConfirmations: 0,
+                    isConfirmedByCurrentAccount: false,
+                },
+                ...state.transactions
+            ]
+
+            return {
+                ...state,
+                transactionCount: state.transactionCount +1,
+                transactions
+            }
+        }
         default:
             return state;
     }
@@ -36,6 +59,8 @@ function reducer(state = INITIAL_STATE, action) {
 const MultiSignatureWalletContext = createContext({
     state: INITIAL_STATE,
     set: (_data) => { },
+    updateBalance: (_data) => { },
+    createTrx: (_data) => { },
 });
 
 export const useMultiSignatureWalletContext = () => {
@@ -59,13 +84,22 @@ export const Provider = ({children}) => {
         })
     }
 
+
+    const createTrx = (data) => {
+        dispatch({
+            type: CREATE_TRANSACTION,
+            data
+        })
+    }
+
     return (
         <MultiSignatureWalletContext.Provider 
         value = {useMemo(
             () => ({
                 state,
                 set,
-                updateBalance
+                updateBalance,
+                createTrx
             }), [state]
         )}>
             {children}
@@ -75,7 +109,7 @@ export const Provider = ({children}) => {
 
 export function Updater() {
     const { state: { web3, account }, } = useWeb3Context();
-    const { state, set, updateBalance } = useMultiSignatureWalletContext();
+    const { state, set, updateBalance, createTrx } = useMultiSignatureWalletContext();
 
     useEffect(() => {
         async function get(web3, account) {
@@ -100,6 +134,10 @@ export function Updater() {
                     switch(log.event){
                         case "Deposit": {
                             updateBalance(log.returnValues)
+                            break;
+                        }
+                        case "Submit": {
+                            createTrx(log.returnValues)
                             break;
                         }
                         default:

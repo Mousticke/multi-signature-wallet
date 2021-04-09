@@ -1,15 +1,14 @@
 import React from 'react'
 import { Button } from "semantic-ui-react";
 import DepositForm from './DepositForm';
+import TransactionForm from './TransactionForm';
 
 function ActionWallet() {
     return (
-        <Button.Group vertical labeled icon>
-            <DepositForm depositTriggerButton={<Button icon='download' color='teal' content='Deposit' />} />          
+        <Button.Group horizontal labeled icon>
+            <DepositForm depositTriggerButton={<Button icon='download' color='blue' content='Deposit' />} />          
             <Button.Or />
-            <Button icon='key' color='green' content='Create Transaction' />
-            <Button.Or />
-            <Button icon='eye' color='blue' content='See Transaction' />
+            <TransactionForm transactionTriggerButton={<Button icon='key' color='green' content='Create Transaction' />} />    
         </Button.Group>
     )
 }
