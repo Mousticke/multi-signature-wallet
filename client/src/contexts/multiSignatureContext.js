@@ -14,6 +14,7 @@ const INITIAL_STATE = {
 const SET = "SET";
 const UPDATE_BALANCE = "UPDATE_BALANCE";
 const CREATE_TRANSACTION = "CREATE_TRANSACTION";
+const UPDATE_TRANSACTION = "UPDATE_TRANSACTION";
 
 function reducer(state = INITIAL_STATE, action) {
     switch (action.type) {
@@ -51,6 +52,38 @@ function reducer(state = INITIAL_STATE, action) {
                 transactions
             }
         }
+        case UPDATE_TRANSACTION: {
+            const { data } = action;
+            const trxIndex = parseInt(data.trxIndex);
+            const transactions = state.transactions.map((trx) => {
+                if(trx.trxIndex === trxIndex){
+                    const updatedTrx = {
+                        ...trx,
+                    };
+
+                    if(data.executed){
+                        updatedTrx.executed = true
+                    }
+                    if(data.confirmed !== undefined){
+                        if(data.confirmed){
+                            updatedTrx.numConfirmations += 1
+                            updatedTrx.isConfirmedByCurrentAccount = data.owner.toUpperCase() === data.account.toUpperCase()
+                        }else{
+                            updatedTrx.numConfirmations -= 1
+                            if (data.owner.toUpperCase() === data.account.toUpperCase()) {
+                                updatedTrx.isConfirmedByCurrentAccount = false;
+                            }
+                        }
+                    }
+                    return updatedTrx
+                }
+                return trx;
+            });
+            return {
+                ...state,
+                transactions
+            }
+        }
         default:
             return state;
     }
@@ -61,6 +94,7 @@ const MultiSignatureWalletContext = createContext({
     set: (_data) => { },
     updateBalance: (_data) => { },
     createTrx: (_data) => { },
+    updateTrx: (_data) => { },
 });
 
 export const useMultiSignatureWalletContext = () => {
@@ -92,6 +126,13 @@ export const Provider = ({children}) => {
         })
     }
 
+    const updateTrx = (data) => {
+        dispatch({
+            type: UPDATE_TRANSACTION,
+            data
+        })
+    }
+
     return (
         <MultiSignatureWalletContext.Provider 
         value = {useMemo(
@@ -99,7 +140,8 @@ export const Provider = ({children}) => {
                 state,
                 set,
                 updateBalance,
-                createTrx
+                createTrx,
+                updateTrx
             }), [state]
         )}>
             {children}
@@ -109,7 +151,7 @@ export const Provider = ({children}) => {
 
 export function Updater() {
     const { state: { web3, account }, } = useWeb3Context();
-    const { state, set, updateBalance, createTrx } = useMultiSignatureWalletContext();
+    const { state, set, updateBalance, createTrx, updateTrx } = useMultiSignatureWalletContext();
 
     useEffect(() => {
         async function get(web3, account) {
@@ -140,13 +182,37 @@ export function Updater() {
                             createTrx(log.returnValues)
                             break;
                         }
+                        case "Cancel": {
+                            updateTrx({
+                                ...log.returnValues,
+                                confirmed: false,
+                                account
+                            })
+                            break;
+                        }
+                        case "Confirm": {
+                            updateTrx({
+                                ...log.returnValues,
+                                confirmed: true,
+                                account
+                            })
+                            break;
+                        }
+                        case "Execute": {
+                            updateTrx({
+                                ...log.returnValues,
+                                executed: true,
+                                account
+                            })
+                            break;
+                        }
                         default:
                             console.log(log);
                     }
                 }
             })
         }
-    }, [web3, state.address])
+    }, [web3, state.address, account])
 
 
     return null

@@ -1,16 +1,49 @@
 import React from 'react'
 import { Table, Button } from 'semantic-ui-react';
 import {useMultiSignatureWalletContext} from '../contexts/multiSignatureContext'
+import useAsync from '../hooks/useAsync'
+import { cancelConfirmation, confirmTrx, executeTrx } from '../api/multi-signature-wallet';
+import { useWeb3Context } from '../contexts/web3Context';
 
 function TransactionTable({account}) {
     const {state} = useMultiSignatureWalletContext();
+    const {
+        state: { web3 },
+    } = useWeb3Context();
+
+    const confirmTransaction = useAsync(async (trxIndex) => {
+        if (!web3) {
+          throw new Error("No web3");
+        }
+    
+        await confirmTrx(web3, account, { trxIndex });
+    });
+
+    const cancelConfirmationTrx = useAsync(async (trxIndex) => {
+        if (!web3) {
+          throw new Error("No web3");
+        }
+    
+        await cancelConfirmation(web3, account, { trxIndex });
+    });    
+
+    const executeTransaction = useAsync(async (trxIndex) => {
+        if (!web3) {
+          throw new Error("No web3");
+        }
+    
+        await executeTrx(web3, account, { trxIndex });
+    });  
 
     const renderAction = (trx) => {
         if(account.toUpperCase() === trx.from.toUpperCase()){
             if(trx.executed === false){
                 if(trx.numConfirmations >= state.numConformationsRequired){
                     return (
-                        <Button color="green">Execute 1 </Button>
+                        <Button 
+                        color="green" 
+                        onClick={(_e) => executeTransaction.call(trx.trxIndex)}
+                        loading={cancelConfirmationTrx.pending}>Execute</Button>
                     )
                 }else{
                     return (
@@ -27,16 +60,33 @@ function TransactionTable({account}) {
             if(trx.executed === false){
                 if(trx.numConfirmations >= state.numConformationsRequired){
                     return (
-                        <Button color="green">Execute 2 </Button>
+                        <Button.Group vertical labeled>
+                            <Button 
+                            color="red" 
+                            onClick={(_e) => cancelConfirmationTrx.call(trx.trxIndex)}
+                            loading={cancelConfirmationTrx.pending} >Cancel</Button>
+                            <Button.Or />
+                            <Button 
+                            color="green" 
+                            onClick={(_e) => executeTransaction.call(trx.trxIndex)} 
+                            loading={executeTransaction.pending}>Execute</Button>
+                        </Button.Group>
+                        
                     )
                 }else{
                     if(trx.isConfirmedByCurrentAccount){
                         return (
-                            <Button color="orange">Revoke</Button>
+                            <Button 
+                            color="red" 
+                            onClick={(_e) => cancelConfirmationTrx.call(trx.trxIndex)}
+                            loading={cancelConfirmationTrx.pending} >Cancel</Button>
                         )
                     }else{
                         return (
-                            <Button color="olive">Confirm</Button>
+                            <Button 
+                            color="teal" 
+                            loading={confirmTransaction.pending} 
+                            onClick={(_e) => confirmTransaction.call(trx.trxIndex)}>Confirm</Button>
                         )
                     } 
                 }
