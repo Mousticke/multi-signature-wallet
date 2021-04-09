@@ -23,7 +23,6 @@ function reducer(state = INITIAL_STATE, action)
             }
         }
         case UPDATE_NET_ID:{
-            console.log("here")
             const {netId} = action
             return {
                 ...state,

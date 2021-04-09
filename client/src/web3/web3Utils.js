@@ -1,5 +1,7 @@
 import Web3 from 'web3'
 
+// https://docs.metamask.io/guide/ethereum-provider.html#table-of-contents
+
 export async function unlockAccount(){
     const {ethereum} = window
 
@@ -8,17 +10,20 @@ export async function unlockAccount(){
     }
 
     const web3 = new Web3(ethereum)
-    await ethereum.enable()
+    //-> deprecated
+    //await ethereum.enable() 
+    //const accounts = await web3.eth.getAccounts()
 
-    const accounts = await web3.eth.getAccounts()
-
+    //new way
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
     return {web3, account: accounts[0] || ""}
 }
 
 export function subscribeAccount(web3, callback){
     const id = setInterval(async () => {
         try{
-            const accounts = await web3.eth.getAccounts()
+            //const accounts = await web3.eth.getAccounts() -> deprecated
+            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
             callback(null, accounts[0])
         } catch(err){
             callback(err, null)
@@ -34,7 +39,6 @@ export function subscribeNetwork(web3, callback){
     const id = setInterval(async () => {
         try{
             const netId = await web3.eth.net.getId()
-            console.log(netId)
             callback(null, netId)
         } catch(err){
             callback(err, null)
