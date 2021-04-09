@@ -19,7 +19,7 @@ const App = () => {
       ) : (
         <>
           <MenuComponent/>
-          <Grid container verticalAlign="middle" centered>
+          <Grid columns={1} container verticalAlign="middle" centered>
             <Grid.Column>
               <MetaMaskConnect/>
             </Grid.Column>     
