@@ -45,7 +45,7 @@ To install the project you need to have `node` and `npm`
 
 4.  from the root of the project: `npm` or `yarn` to install all dependencies
 
-    - make sure you have latest `npm` version
+    - make sure you have latest `npm` or `yarn` version
 
 5.  from the root of the project: `yarn start` to run the cli.
 
