@@ -2,6 +2,7 @@ import TruffleContract from '@truffle/contract'
 import multiSignatureWalletTruffle from '../contracts/MultiSignature.json'
 
 const MultiSignatureWallet = TruffleContract(multiSignatureWalletTruffle)
+let arrayEventHistory = []
 
 export async function get(web3, account) {
   MultiSignatureWallet.setProvider(web3.currentProvider)
@@ -109,4 +110,18 @@ export function subscribe(web3, address, callback) {
     .on('error', (err) => {
       callback(err, null)
     })
+}
+
+export function getEventHistory(web3, address) {
+  MultiSignatureWallet.setProvider(web3.currentProvider)
+  const contract = new web3.eth.Contract(MultiSignatureWallet.abi, address)
+  contract.getPastEvents(
+    'allEvents',
+    { fromBlock: 0, toBlock: 'latest' },
+    (error, events) => {
+      arrayEventHistory = [...events]
+    }
+  )
+
+  return arrayEventHistory
 }

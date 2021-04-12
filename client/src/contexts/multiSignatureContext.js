@@ -18,7 +18,6 @@ import {
   SET,
   MultiSignatureReducer,
 } from '../reducers/multiSignatureReducer'
-
 const MultiSignatureWalletContext = createContext({
   state: INITIAL_STATE,
   dispatch: (_data) => {},

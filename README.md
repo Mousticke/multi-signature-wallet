@@ -16,7 +16,7 @@
 
 ## Procedure
 
-Please follow each procedures in the [Smart Contract Readme](https://github.com/Mousticke/multi-signature-wallet/blob/main/smart-contact/README.md) and the [Client Readme](https://github.com/Mousticke/multi-signature-wallet/blob/main/client/README.md)
+Please follow each procedures in the [Smart Contract Readme](https://github.com/Mousticke/multi-signature-wallet/blob/main/smart-contract/README.md) and the [Client Readme](https://github.com/Mousticke/multi-signature-wallet/blob/main/client/README.md)
 
 > A global installation script will follow soon.
 
@@ -31,7 +31,7 @@ Please follow each procedures in the [Smart Contract Readme](https://github.com/
 
 ## 🤝 Contributing
 
-Contributions, issues and feature requests are welcome!<br />Feel free to check [issues page](https://github.com/Mousticke/multi-signature-wallet/issues). You can also take a look at the [contributing guide smart contract](https://github.com/Mousticke/multi-signature-wallet/blob/main/smart-contact/CONTRIBUTING.md) and [contributing guide client](https://github.com/Mousticke/multi-signature-wallet/blob/main/client/CONTRIBUTING.md).
+Contributions, issues and feature requests are welcome!<br />Feel free to check [issues page](https://github.com/Mousticke/multi-signature-wallet/issues). You can also take a look at the [contributing guide smart contract](https://github.com/Mousticke/multi-signature-wallet/blob/main/smart-contract/CONTRIBUTING.md) and [contributing guide client](https://github.com/Mousticke/multi-signature-wallet/blob/main/client/CONTRIBUTING.md).
 
 ## Show your support
 
