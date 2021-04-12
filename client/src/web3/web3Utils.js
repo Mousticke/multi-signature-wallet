@@ -10,11 +10,23 @@ export async function unlockAccount(){
     }
 
     const web3 = new Web3(ethereum)
+
     //-> deprecated
     //await ethereum.enable() 
     //const accounts = await web3.eth.getAccounts()
 
     //new way
-    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    return {web3, account: accounts[0] || ""}
+    try {
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        return {web3, account: accounts[0] || ""}
+    } catch (err) {
+        if (err.code === 4001) {
+            // EIP-1193 userRejectedRequest error
+            // If this happens, the user rejected the connection request.
+            console.log('Please connect to MetaMask.');
+          } else {
+            console.error(err);
+          }
+    }
+
 }

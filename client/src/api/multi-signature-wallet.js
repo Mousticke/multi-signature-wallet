@@ -62,16 +62,6 @@ export async function submitTrx(web3, account, params){
 
     MultiSignatureWallet.setProvider(web3.currentProvider)  
     const multiSignature = await MultiSignatureWallet.deployed()
-    /*await window.ethereum.request({ 
-        method: "eth_sendTransaction", 
-        params: [
-            {
-                to: to, 
-                from: account,
-                value: web3.utils.toHex(params.value),
-            }
-        ]
-    }); */
     await multiSignature.submitTransaction(to, value, data, {
         from: account,
     });  
@@ -106,14 +96,6 @@ export async function executeTrx(web3, account, params){
 
 export function subscribe(web3, address, callback){
     const multiSignature = new web3.eth.Contract(MultiSignatureWallet.abi, address)
-    /*const res = multiSignature.events.allEvents((error, log) => {
-        if(error)
-            callback(error, null)
-        else if(log)
-            callback(null, log)
-    })
-
-    return () => res.unsubscribe()*/
     multiSignature.events.allEvents()
     .on('data', (event) => {
         console.log(event)
