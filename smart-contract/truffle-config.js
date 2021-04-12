@@ -1,5 +1,12 @@
 const path = require("path");
 
+const HDWalletProvider = require("@truffle/hdwallet-provider")
+const infuraKey = "7a27b6b469964a2c850f57edbc35baab"
+
+const fs = require("fs")
+const mnemonic = fs.readFileSync('.secret').toString().trim()
+
+
 module.exports = {
   // See <http://truffleframework.com/docs/advanced/configuration>
   // to customize your Truffle configuration!
@@ -9,6 +16,14 @@ module.exports = {
       port: 8545,
       network_id: "*", // match any network
       websockets: true
+    },
+    ropsten:{
+      provider: new HDWalletProvider(mnemonic, `https://ropsten.infura.io/v3/${infuraKey}`),
+      network_id: 3,
+      gas: 5500000,
+      confirmations: 2,
+      timeoutBlocks: 200,
+      skipDryRun: true,
     }
   },
     // Set default mocha options here, use special reporters etc.
