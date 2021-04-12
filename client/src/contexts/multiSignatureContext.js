@@ -29,7 +29,7 @@ export const Provider = ({children}) => {
     )
 }
 
-export function Updater() {
+export function MultiSignatureEvents() {
     const { state: { web3, account }, } = useWeb3Context();
     const { state, dispatch } = useMultiSignatureWalletContext();
 
