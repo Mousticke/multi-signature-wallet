@@ -1,20 +1,20 @@
 import React from 'react'
 import { Button, Card, Message } from 'semantic-ui-react'
 import { useWeb3Context } from '../contexts/web3Context'
+import { UPDATE_ACCOUNT } from '../reducers/web3Reducer'
 import useAsync from '../hooks/useAsync'
 import { unlockAccount } from '../web3/web3Utils'
 
 function MetaMaskConnect() {
     const {pending, error, call} = useAsync(unlockAccount)
-    const {updateAccount} = useWeb3Context()
-
+    const {dispatch} = useWeb3Context()
     async function onClickConnect(){
         const {error, data} = await call(null)
         if(error){
             console.error(error)
         }
-        if(data){
-            updateAccount(data)
+        if(data){             
+            dispatch({...data, type: UPDATE_ACCOUNT})
         }
     }
 

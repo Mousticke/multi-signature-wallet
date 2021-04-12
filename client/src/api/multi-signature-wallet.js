@@ -106,12 +106,20 @@ export async function executeTrx(web3, account, params){
 
 export function subscribe(web3, address, callback){
     const multiSignature = new web3.eth.Contract(MultiSignatureWallet.abi, address)
-    const res = multiSignature.events.allEvents((error, log) => {
+    /*const res = multiSignature.events.allEvents((error, log) => {
         if(error)
             callback(error, null)
         else if(log)
             callback(null, log)
     })
 
-    return () => res.unsubscribe()
+    return () => res.unsubscribe()*/
+    multiSignature.events.allEvents()
+    .on('data', (event) => {
+        console.log(event)
+        callback(null, event)
+    })
+    .on('error', (err) => {
+        callback(err, null)
+    })
 }

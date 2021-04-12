@@ -3,15 +3,15 @@ import { Menu } from 'semantic-ui-react'
 
 function getNetwork(netId) {
     switch (netId) {
-      case 1:
+      case "0x1":
         return "Mainnet";
-      case 2:
+      case "0x2":
         return "Morden test network";
-      case 3:
+      case "0x3":
         return "Ropsten network";
-      case 4:
+      case "0x4":
         return "Rinkeby test network";
-      case 42:
+      case "0x2a":
         return "Kovan test network";
       default:
         return "Unknown network";

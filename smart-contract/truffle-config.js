@@ -6,7 +6,9 @@ module.exports = {
   contracts_build_directory: path.join(__dirname, "build/contracts"),
   networks: {
     develop: {
-      port: 8545
+      port: 8545,
+      network_id: "*", // match any network
+      websockets: true
     }
   },
     // Set default mocha options here, use special reporters etc.

@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect, createContext, useContext, useMemo, } from "react";
+import React, { useReducer, useEffect, createContext, useContext, useMemo } from "react";
 import { useWeb3Context } from "../contexts/web3Context";
 import { get as getMultiSignatureWallet, subscribe } from "../api/multi-signature-wallet";
 import Web3 from "web3";
@@ -91,10 +91,7 @@ function reducer(state = INITIAL_STATE, action) {
 
 const MultiSignatureWalletContext = createContext({
     state: INITIAL_STATE,
-    set: (_data) => { },
-    updateBalance: (_data) => { },
-    createTrx: (_data) => { },
-    updateTrx: (_data) => { },
+    dispatcher: (_data) => { },
 });
 
 export const useMultiSignatureWalletContext = () => {
@@ -104,46 +101,22 @@ export const useMultiSignatureWalletContext = () => {
 export const Provider = ({children}) => {
     const [state, dispatch] = useReducer(reducer, INITIAL_STATE)
 
-    const set = (data) => {
+    const dispatcher = (data, type) => {
         dispatch({
-            type: SET,
+            type: type,
             data
         })
     }
-
-    const updateBalance = (data) => {
-        dispatch({
-            type: UPDATE_BALANCE,
-            data
-        })
-    }
-
-
-    const createTrx = (data) => {
-        dispatch({
-            type: CREATE_TRANSACTION,
-            data
-        })
-    }
-
-    const updateTrx = (data) => {
-        dispatch({
-            type: UPDATE_TRANSACTION,
-            data
-        })
-    }
+    const valueProvider = useMemo(() => ({
+            state,
+            dispatcher
+        }),
+        [state]
+    )
 
     return (
         <MultiSignatureWalletContext.Provider 
-        value = {useMemo(
-            () => ({
-                state,
-                set,
-                updateBalance,
-                createTrx,
-                updateTrx
-            }), [state]
-        )}>
+        value = {valueProvider}>
             {children}
         </MultiSignatureWalletContext.Provider>
     )
@@ -151,13 +124,17 @@ export const Provider = ({children}) => {
 
 export function Updater() {
     const { state: { web3, account }, } = useWeb3Context();
-    const { state, set, updateBalance, createTrx, updateTrx } = useMultiSignatureWalletContext();
+    const { state, dispatcher } = useMultiSignatureWalletContext();
+
+
+
 
     useEffect(() => {
+        
         async function get(web3, account) {
             try {
                 const data = await getMultiSignatureWallet(web3, account);
-                set(data)
+                dispatcher(data, SET)
             } catch (error) {
                 console.error(error);
             }
@@ -175,35 +152,35 @@ export function Updater() {
                 else if(log){
                     switch(log.event){
                         case "Deposit": {
-                            updateBalance(log.returnValues)
+                            dispatcher(log.returnValues, UPDATE_BALANCE)
                             break;
                         }
                         case "Submit": {
-                            createTrx(log.returnValues)
+                            dispatcher(log.returnValues, CREATE_TRANSACTION)
                             break;
                         }
                         case "Cancel": {
-                            updateTrx({
+                            dispatcher({
                                 ...log.returnValues,
                                 confirmed: false,
                                 account
-                            })
+                            }, UPDATE_TRANSACTION)
                             break;
                         }
                         case "Confirm": {
-                            updateTrx({
+                            dispatcher({
                                 ...log.returnValues,
                                 confirmed: true,
                                 account
-                            })
+                            }, UPDATE_TRANSACTION)
                             break;
                         }
                         case "Execute": {
-                            updateTrx({
+                            dispatcher({
                                 ...log.returnValues,
                                 executed: true,
                                 account
-                            })
+                            }, UPDATE_TRANSACTION)
                             break;
                         }
                         default:

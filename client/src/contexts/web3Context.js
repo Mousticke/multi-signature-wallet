@@ -1,43 +1,9 @@
-import React, {useReducer, createContext, useContext, useEffect, useMemo} from "react"
-import {subscribeAccount, subscribeNetwork} from "../web3/web3Utils"
-
-const UPDATE_ACCOUNT = "UPDATE_ACCOUNT"
-const UPDATE_NET_ID = "UPDATE_NET_ID";
-const INITIAL_STATE = {
-    account: "",
-    netId: 0,
-    web3: null
-};
-
-function reducer(state = INITIAL_STATE, action)
-{
-    switch(action.type){
-        case UPDATE_ACCOUNT:{
-            const web3 = action.web3 || state.web3
-            const {account} = action
-
-            return {
-                ...state,
-                web3,
-                account
-            }
-        }
-        case UPDATE_NET_ID:{
-            const {netId} = action
-            return {
-                ...state,
-                netId
-            }
-        }
-        default:
-            return state;
-    }
-}
+import React, {useReducer, createContext, useContext, useMemo} from "react"
+import {Web3Reducer, INITIAL_STATE, UPDATE_NET_ID} from "../reducers/web3Reducer"
 
 const Web3Context = createContext({
-    state: INITIAL_STATE, 
-    updateAccount: (_data) => {},
-    updateNetId: (_data) => { },
+    state: INITIAL_STATE,
+    dispatch: (_data) => {}
 })
 
 export function useWeb3Context(){
@@ -45,72 +11,48 @@ export function useWeb3Context(){
 }
 
 export const Provider = ({children}) => {
-    const [state, dispatch] = useReducer(reducer, INITIAL_STATE)
+    const [state, dispatch] = useReducer(Web3Reducer, INITIAL_STATE)
 
-    const updateAccount = (data) => {
-        dispatch({
-            type: UPDATE_ACCOUNT,
-            ...data
-        })
-    }
-
-    const updateNetId = (data) => {
-        dispatch({
-            type: UPDATE_NET_ID,
-            ...data
-        })
-    }    
+    const valueProvider = useMemo(() => ({
+        state,
+        dispatch
+    }),[state])
 
     return (
-        <Web3Context.Provider value={useMemo(
-            () => ({
-                state, 
-                updateAccount,
-                updateNetId
-            }),
-            [state]
-        )}>
+        <Web3Context.Provider value={valueProvider}>
             {children}
         </Web3Context.Provider>
     )
-
 }
 
-export const Updater = () => {
-    const {state, updateNetId} = useWeb3Context()
+export const Web3Events = () => {
+    const {state, dispatch} = useWeb3Context()
 
-    useEffect(() => {
-        if(state.web3){
-            const unsubscribe = subscribeAccount(state.web3, (error, account) => {
-                if(error){
-                    console.error(error)
-                }
-                if(account !== undefined && account !== state.account){
-                    window.location.reload();
-                }
-            });
+    window.ethereum.on('connect', function (init) {
+        state.netId = init.chainId
+    })
 
-            return unsubscribe
+    window.ethereum.on('accountsChanged', function (account, error) {
+        if(error){
+            console.error(error)
         }
-    }, [state.web3, state.account]);
 
-    useEffect(() => {
-        if(state.web3){
-            const unsubscribe = subscribeNetwork(state.web3, (error, netId) => {
-                if(error){
-                    console.error(error)
-                }
-                if(netId){
-                    if(state.netId === 0)
-                        updateNetId({netId});
-                    else if(netId !== state.netId)
-                        window.location.reload();
-                }
-            });
-
-            return unsubscribe
+        if(account !== undefined && account !== state.account){
+            window.location.reload();
         }
-    }, [state.web3, state.netId, updateNetId]);
+    })
 
+    window.ethereum.on('chainChanged', function (netId, error) {
+        if(error){
+            console.error(error)
+        }
+        if(netId){
+            if(state.netId === 0)
+                dispatch({netId, type: UPDATE_NET_ID});
+            else if(netId !== state.netId)
+                window.location.reload();
+        }
+    })
+    
     return null;
 }
