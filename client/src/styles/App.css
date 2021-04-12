@@ -1,13 +1,12 @@
-.App
-{
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
+.App {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
-.Menu__AppName{
-    flex-grow: 1 !important;
-    justify-content: center !important;
-    text-align: center;
-    font-size: 1.5rem;
+.Menu__AppName {
+  flex-grow: 1 !important;
+  justify-content: center !important;
+  text-align: center;
+  font-size: 1.5rem;
 }
