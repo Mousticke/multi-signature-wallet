@@ -93,6 +93,7 @@ export async function executeTrx(web3, account, params) {
   const { trxIndex } = params
   MultiSignatureWallet.setProvider(web3.currentProvider)
   const multiSignature = await MultiSignatureWallet.deployed()
+  console.log(trxIndex)
   await multiSignature.executeTransaction(trxIndex, { from: account })
 }
 
